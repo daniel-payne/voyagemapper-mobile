@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>PeoplePage</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+ 
+  <ion-list no-lines>
+
+    <ion-item-divider color="light">
+      <span>My People</span>
+      <button ion-button icon-only clear style="float: right; margin-right: 4px; margin-top: -4px;">
+        <ion-icon name="add" ></ion-icon>
+      </button>   
+    </ion-item-divider>
+
+    <div padding>
+      You can invire up to three people to your personal group, for larger groups you will need to set up a group account
+    </div>
+
+    <button ion-button full secondary margin>Go to website</button> 
+
+    <ion-item-divider color="light">
+      <span>Keldan Systems People</span>
+      <button ion-button icon-only clear style="float: right; margin-right: 4px; margin-top: -4px;">
+        <ion-icon name="add" ></ion-icon>
+      </button>   
+    </ion-item-divider>
+
+    <button ion-item (click)="showInformation()">
+      <ion-avatar item-left>
+        <ion-icon name="locate"></ion-icon>
+      </ion-avatar>
+      <h2>David Smith</h2>
+      <h3>Cambridgshire</h3>
+      <p>England, United Kingdom</p>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="danger">3</ion-badge>
+      <ion-badge item-right color="danger">12</ion-badge>
+      <p>+44 15236 256325</p>
+      <ion-note item-end>Current time 10:24</ion-note>
+    </button>
+
+
+    <button ion-item (click)="showInformation()">
+      <ion-avatar item-left>
+        <ion-icon name="locate"></ion-icon>
+      </ion-avatar>
+      <h2>Bill Brown</h2>
+      <h3>Cambridgshire</h3>
+      <p>England, United Kingdom</p>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="danger">3</ion-badge>
+      <ion-badge item-right color="danger">12</ion-badge>
+      <p>+44 15247 256554125</p>
+      <ion-note item-end>Current time 10:24</ion-note>
+    </button>
+
+  
+  </ion-list>
+
+</ion-content>

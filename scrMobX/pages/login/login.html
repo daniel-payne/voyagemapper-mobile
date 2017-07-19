@@ -1,0 +1,49 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>loginPage</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+    <ion-list no-lines>
+
+      <ion-item-divider color="light">
+        Returning User
+      </ion-item-divider>
+
+      <ion-item>
+        <ion-label floating>Username</ion-label>
+        <ion-input type="text" value=""></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" value=""></ion-input>
+      </ion-item>
+
+      <div padding>
+
+        <button ion-button color="primary" block>Sign In</button>
+
+      </div>
+
+      <ion-item-divider color="light">
+        New User
+      </ion-item-divider>
+   
+      <div padding>
+        <button ion-button color="secondary" block (click)="useAnonymously()" >Just Start Using</button>
+        <h4>You can create an account later on when you logout, in the meantime you can use the application anynmonosuly and no data will be saved on the server</h4>
+      </div>
+
+    </ion-list>
+
+ 
+
+ 
+
+</ion-content>

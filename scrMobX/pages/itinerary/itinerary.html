@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>ItineraryPage</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content >
+ 
+  <ion-list no-lines>
+    <ion-item-divider color="light">Current Position</ion-item-divider>
+
+    <button ion-item (click)="showInformation('CURRENT')" >
+      <ion-avatar item-left>
+        <ion-icon name="locate"></ion-icon>
+      </ion-avatar> 
+      <h2>{{storeManager.currentPosition | json}}</h2>
+      <h2>{{storeManager.test}}</h2>
+      <h3>{{storeManager.currentPosition.location.secondaryName}}</h3>
+      <p>{{storeManager.currentPosition.location.tertiaryName}}</p>
+      <ion-badge item-right color="secondary" >0</ion-badge>
+      <ion-badge item-right color="danger" >7</ion-badge>
+      <ion-badge item-right color="danger" >58</ion-badge>
+    </button>
+
+    <ion-item-divider color="light">
+
+      <span>Flights and Hotels</span>
+      <button ion-button icon-only clear style="float: right; margin-right: 4px; margin-top: -4px;">
+        <ion-icon name="add" ></ion-icon>
+      </button>   
+
+    </ion-item-divider>
+
+      <ion-item-sliding>
+        <button ion-item>
+          <ion-avatar item-left>
+            <ion-icon name="plane"></ion-icon>
+          </ion-avatar>
+          <h2>Flight Departure</h2>
+          <h3>LHR</h3>
+          <p>London, England, United Kingdom</p>
+          <ion-badge item-right color="danger">3</ion-badge>
+          <ion-badge item-right color="danger">4</ion-badge>
+          <ion-badge item-right color="danger">8</ion-badge>
+        </button>
+            <ion-item-options side="right">
+          <button ion-button color="danger">
+            <ion-icon name="delete"></ion-icon>
+            Delete Flight
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+
+    <button ion-item>
+      <ion-avatar item-left>
+        <ion-icon name="plane"></ion-icon>
+      </ion-avatar>
+      <h2>Flight Arrival</h2>
+      <h3>LAX</h3>
+      <p>Los anglies, Calofrnia, United States</p>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="danger">5</ion-badge>
+    </button>
+
+    <button ion-item>
+      <ion-avatar item-left>
+        <ion-icon name="key"></ion-icon>
+        <div>3 Nights</div>
+      </ion-avatar>
+      <h2>Hotel Stay</h2>
+      <h3>Grand hotel</h3>
+      <p>Los anglies, Calofrnia, United States</p>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="danger">5</ion-badge>
+    </button>
+
+    <button ion-item>
+      <ion-avatar item-left>
+        <ion-icon name="plane"></ion-icon>
+      </ion-avatar>
+      <h2>Flight Departure</h2>
+      <h3>LAX</h3>
+      <p>Losanglies, Calofrnia, United States</p>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="secondary">✓</ion-badge>
+      <ion-badge item-right color="danger">5</ion-badge>
+    </button>
+    
+    <button ion-item>
+      <ion-avatar item-left>
+        <ion-icon name="plane"></ion-icon>
+      </ion-avatar>
+      <h2>Flight Arrival</h2>
+      <h3>LHR</h3>
+      <p>London, England, United Kingdom</p>
+      <ion-badge item-right color="danger">3</ion-badge>
+      <ion-badge item-right color="danger">4</ion-badge>
+      <ion-badge item-right color="danger">8</ion-badge>
+     </button>
+  </ion-list>
+
+</ion-content>

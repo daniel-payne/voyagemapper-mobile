@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar primary>
+    <ion-title><span>Select a {{searchType}} to add</span></ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="close()">
+        <ion-icon name="close" hideWhen="ios"></ion-icon>
+        <div showWhen="ios">Close</div>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+ 
+
+<ion-content>
+  <ion-searchbar #searchPlace (ionInput)="getCities(searchPlace.value)"></ion-searchbar>
+
+  <ion-list>
+    <button ion-item *ngFor="let match of matches" (click)="addPlace(match)">
+      {{ match.fullName }}
+    </button>
+  </ion-list>
+
+  <div padding *ngIf="showTownsOption === true">
+    <button ion-button full (click)="getTowns(searchPlace.value)">Show Smaller Towns</button>
+  </div>
+
+</ion-content>

@@ -1,0 +1,46 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>TracingPage</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-list >
+    <ion-item-divider color="light">Tracking Your Position Until You Reach</ion-item-divider>
+
+    <ion-item>
+
+        <h1>JJ Grand Hotel</h1>
+        <h1>620 S Harvard Blvd</h1>
+        <h2>Los Angeles</h2>
+        <h2>CA 90005</h2>
+        <h3>USA</h3>
+
+   </ion-item>
+
+       <ion-item>
+         <p>Distance 12 miles</p>
+
+
+
+        <button large ion-button block color="danger" outline>
+          <ion-icon name="cancel" item-start ></ion-icon>
+          Cancel Tracking
+        </button>
+
+        <p>Current Position</p>
+        <p>{{(latitude$   | async | number:'3.4-4' )}}</p>
+        <p>{{(longitude$  | async | number:'3.4-4' )}}</p>
+
+      </ion-item>
+      
+      <ion-item>
+        <ion-img width="100%" height="500px" src="../assets/map.png"></ion-img>
+      </ion-item>
+
+  </ion-list>
+</ion-content>
