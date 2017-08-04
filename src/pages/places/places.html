@@ -1,46 +1,37 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>PlacesPage</ion-title>
+    <ion-title>Places</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
  
   <ion-list no-lines>
-    <ion-item-divider color="light">My Places</ion-item-divider>
-
-    <button ion-item>
-      <ion-avatar item-left>
-        <ion-icon name="home"></ion-icon>
-      </ion-avatar>
-      <h2>Rome</h2>
-      <h3>Italy</h3>
-      <p></p>
-      <ion-badge item-right color="danger">1</ion-badge>
-      <ion-badge item-right color="danger">2</ion-badge>
-      <ion-badge item-right color="danger">4</ion-badge>
-    </button>
-
     <ion-item-divider color="light">
-      <span>Keldan Systems Places</span>
-      <button ion-button icon-only clear style="float: right; margin-right: 4px; margin-top: -4px;">
+      <span>My Places</span>
+      <button ion-button icon-only clear style="float: right; margin-right: 4px; margin-top: -4px;" (click)="addPlace()" >
         <ion-icon name="add" ></ion-icon>
-      </button>   
+      </button>  
     </ion-item-divider>
 
-    <button ion-item>
-      <ion-avatar item-left>
-        <ion-icon name="home"></ion-icon>
-      </ion-avatar>
-      <h2>Cambridge Office</h2>
-      <h3>Cambridge</h3>
-      <p>Cambridgshire, England, United Kingdom</p>
-     <ion-badge item-right color="secondary">✓</ion-badge>
-      <ion-badge item-right color="danger">3</ion-badge>
-      <ion-badge item-right color="danger">12</ion-badge>
-    </button>
+      <ion-item-sliding *ngFor="let item of dataManager.userPlaces">
+        <button ion-item>
+          <ion-avatar item-left>
+            <ion-icon [name]="item.pointType | typeIcon "></ion-icon>
+          </ion-avatar>
+          <h2>{{item.fullName}}</h2>
+          <ion-badge item-right [color]="item.countyIncidents.length  | incidentColor" >{{item.countyIncidents.length}}</ion-badge>
+          <ion-badge item-right [color]="item.stateIncidents.length   | incidentColor" >{{item.stateIncidents.length}}</ion-badge>
+          <ion-badge item-right [color]="item.countryIncidents.length | incidentColor" >{{item.countryIncidents.length}}</ion-badge>
+        </button>
+            <ion-item-options side="right">
+          <button ion-button color="danger">
+            <ion-icon name="delete"></ion-icon>
+            Delete Place
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
 
-  
   </ion-list>
 
 </ion-content>

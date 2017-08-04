@@ -1,9 +1,10 @@
-import { Component  }                                 from '@angular/core';
-import { IonicPage, NavController, NavParams }        from 'ionic-angular';
+import { Component  }                                                  from '@angular/core';
+import { IonicPage, NavController, NavParams, ModalController }        from 'ionic-angular';
 
 import { InformationPage }       from '../information/information'
+import { AddTravelPage }         from '../add-travel/add-travel'
 
-import { StoreManager } from '../../data/StoreManager'
+import { DataManager }     from '../../data/DataManager'
 
 @IonicPage()
 @Component({
@@ -13,9 +14,10 @@ import { StoreManager } from '../../data/StoreManager'
 export class ItineraryPage {
 
   constructor(
-    public  navCtrl:          NavController, 
-    public  navParams:        NavParams,
-    public  storeManager:     StoreManager,
+    private  navController:          NavController, 
+    private  navParams:              NavParams,
+    private  dataManager:            DataManager,
+    public   modalController:        ModalController,
   ) {
   }
 
@@ -23,9 +25,33 @@ export class ItineraryPage {
     console.log('ionViewDidLoad ItineraryPage');
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   showInformation(target){
-    this.storeManager.chooseInformation(target)
-    this.navCtrl.push(InformationPage)
+    this.dataManager.choosePoint(target)
+    
+    this.navController.push(InformationPage)
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  refresh(){    
+
+    this.dataManager.refresh() 
+
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  addTravel(){
+
+    let addTravelModal = this.modalController.create(AddTravelPage);
+    
+    addTravelModal.present();
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 }

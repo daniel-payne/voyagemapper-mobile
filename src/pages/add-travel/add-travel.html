@@ -20,41 +20,53 @@
     <ion-list >
       <button ion-item *ngFor="let match of matches" (click)="chooseAirport(match)">
         {{ match.fullName }}
-      </button>
+      </button> 
     </ion-list>
-
-    <button ion-button full (click)="chooseReturn(true)">Accomodation only</button>
+    
+    <div padding *ngIf="showHotelOnlyOption === true">
+      <button ion-button full (click)="chooseAccomodationOnly(true)">Accomodation only</button>
+    </div>
   </div>
 
-  <div *ngIf="showReturnFlight === true">
-    <button ion-button full (click)="chooseReturn(true)">Add Return Flight</button>
-    <button ion-button full (click)="chooseReturn(false)" color="light">No Return Floght</button>
+  <div padding *ngIf="showReturnFlight === true">
+    <button ion-button full (click)="chooseReturnFlight(true)">Add Return Flight</button>
+    &nbsp;
+    <button ion-button full (click)="chooseReturnFlight(false)" color="light">No Return Flight</button>
   </div>
 
   <div *ngIf="showFlightDates === true">
     <ion-list>
-      <ion-item>
-        <ion-label>Flying from {{leavingAirport.fullName.split(',')[0]}} on</ion-label>
-        <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="leavingDate" max="2020-12-31"></ion-datetime>
-      </ion-item>
-      <ion-item>
-        <ion-label>Is It an overnight flight</ion-label>
-        <ion-checkbox [(ngModel)]="leavingOvernightFlight"></ion-checkbox>
-      </ion-item>
 
-      <ion-item>
-        <ion-label>Returning from {{arrivingAirport.fullName.split(',')[0]}} on</ion-label>
-        <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="returningDate" max="2020-12-31"></ion-datetime>
-      </ion-item>
-      <ion-item>
-        <ion-label>Is It an overnight flight</ion-label>
-        <ion-checkbox [(ngModel)]="returningOvernightFlight"></ion-checkbox>
-      </ion-item>
+      <div>
+        <ion-item>
+          <ion-label>Flying from {{departureAirport.fullName.split(',')[0]}} on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="departureDate" max="2020-12-31"></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label>Is It an overnight flight</ion-label>
+          <ion-checkbox [(ngModel)]="outboundOvernightFlight"></ion-checkbox>
+        </ion-item>
+      </div>
+
+      <div *ngIf="hasReturnFlight === true">
+        <ion-item>
+          <ion-label>Returning from {{arrivalAirport.fullName.split(',')[0]}} on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="leavingDate" max="2020-12-31"></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label>Is It an overnight flight</ion-label>
+          <ion-checkbox [(ngModel)]="ReturnOvernightFlight"></ion-checkbox>
+        </ion-item>
+      </div>
+
     </ion-list>
+
    
-    <button ion-button full  (click)="chooseAccommodation(true)" >Add Accomodation</button> 
-    <button ion-button full (click)="chooseAccommodation(true)" color="light">No Accomodation</button>
- 
+    <div padding>
+      <button ion-button full  (click)="chooseAccommodation(true)" >Add Accomodation</button> 
+      &nbsp;
+      <button ion-button full (click)="chooseAccommodation(false)" color="light">No Accomodation</button>
+    </div>
   </div>
 
   <div *ngIf="showPlaceSearch === true">
@@ -83,33 +95,58 @@
     <div padding >
       <button ion-button full (click)="getHotels('ALL')">Show all hotels in {{accommodationPlace.fullName.split(',')[0]}}</button>
     </div>
+    <div padding >
+      <button ion-button full (click)="chooseUnnamedHotel()" color="light">Choose unnamed hotel in {{accommodationPlace.fullName.split(',')[0]}}</button>
+    </div>
   </div>
 
   <div *ngIf="showConfirmation === true">
-    <ion-list>   
-       <ion-item-divider>Outward Flight {{leavingAirport.fullName.split(',')[0]}} to {{arrivingAirport.fullName.split(',')[0]}}</ion-item-divider>       
-       <ion-item no-lines>
-         <ion-label>Departing on</ion-label>
-         <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="leavingDate" max="2020-12-31"></ion-datetime>
-       </ion-item>
-       <ion-item no-lines>
-         <ion-label>Arriving on</ion-label>
-         <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="arrivingDate" max="2020-12-31"></ion-datetime>
-       </ion-item>  
-       <ion-item-divider>Staying At {{accommodationHotel.fullName}}</ion-item-divider>  
-       <ion-item no-lines>
-         <ion-label>Checking in on</ion-label>
-         <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="leavingDate" max="2020-12-31"></ion-datetime>
-       </ion-item>
-       <ion-item no-lines>
-         <ion-label>Checking out on</ion-label>
-         <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="arrivingDate" max="2020-12-31"></ion-datetime>
-       </ion-item>  
-       <ion-item-divider>Returning Flight</ion-item-divider>   
-       <ion-item no-lines>{{arrivingAirport.fullName}}</ion-item>    
-       <ion-item no-lines>{{leavingAirport.fullName}}</ion-item>    
+    <ion-list> 
+
+       <div *ngIf="hasOutboundFlight === true">  
+         <ion-item-divider>{{departureAirport.fullName.split(',')[0]}} ▶ {{arrivalAirport.fullName.split(',')[0]}}</ion-item-divider>       
+         <ion-item no-lines>
+           <ion-label>Departing on</ion-label>
+           <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="departureDate" max="2020-12-31"></ion-datetime>
+         </ion-item>
+         <ion-item no-lines>
+           <ion-label>Arriving on</ion-label>
+           <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="arrivalDate" max="2020-12-31"></ion-datetime>
+         </ion-item>
+      </div>  
+
+       <div *ngIf="hasAccommodation === true"> 
+        <ion-item-divider>{{accommodationHotel.fullName.split(',')[0]}}</ion-item-divider>  
+        <ion-item no-lines>
+          <ion-label>Checking in on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="checkinDate" max="2020-12-31"></ion-datetime>
+        </ion-item>
+        <ion-item no-lines>
+          <ion-label>Checking out on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="checkoutDate" max="2020-12-31"></ion-datetime>
+        </ion-item>  
+      </div> 
+      
+      <div *ngIf="hasReturnFlight === true">  
+        <ion-item-divider>{{arrivalAirport.fullName.split(',')[0]}} ▶ {{departureAirport.fullName.split(',')[0]}}</ion-item-divider>   
+        <ion-item no-lines>
+          <ion-label>Leaving on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="leavingDate" max="2020-12-31"></ion-datetime>
+        </ion-item>
+        <ion-item no-lines>
+          <ion-label>Returning on</ion-label>
+          <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="returningDate" max="2020-12-31"></ion-datetime>
+        </ion-item>   
+      </div> 
     </ion-list>
-    <button padding ion-button full  >Add Travel to itinerary</button>
+
+    <div padding>  
+      <button padding ion-button full (click)="addPoints()">Add Travel to itinerary</button>
+    </div>
+
   </div>
 
 </ion-content>
+
+ 
+

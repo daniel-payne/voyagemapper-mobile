@@ -5,15 +5,15 @@ import { DataManager } from '../../data/DataManager'
 
 @Component({
   selector: 'page-add-place',
-  templateUrl: 'add-place.html',
+  templateUrl: 'add-place.html', 
 })
 export class AddPlacePage {
 
-  @ViewChild('searchPlace') searchPlace: ElementRef;
+  @ViewChild('searchPlace') searchPlace: ElementRef 
  
   matches: any = []
 
-  searchType      = 'city'
+  pointType       = undefined
   showTownsOption = false
 
   constructor(
@@ -23,11 +23,11 @@ export class AddPlacePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad add-place');
+    console.log('ionViewDidLoad add-place') 
   }
 
   close(){
-    this.viewController.dismiss();
+    this.viewController.dismiss()  
   }
 
   getCities(searchTerm: any){
@@ -37,7 +37,7 @@ export class AddPlacePage {
   
         this.matches =  [...results]
   
-        this.searchType      = 'city'
+        this.pointType       = 'CON'
         this.showTownsOption = (this.matches.length < 5)
         
       })
@@ -51,7 +51,7 @@ export class AddPlacePage {
   
         this.matches =  [...results]
   
-        this.searchType      = 'town'
+        this.pointType       = 'SET'
         this.showTownsOption = false
         
       })
@@ -59,7 +59,10 @@ export class AddPlacePage {
   }
 
   addPlace(match){
-    this.dataManager.addPoint(match) 
+ 
+    let newPoint = Object.assign( {}, match, {pointType: this.pointType} )
+
+    this.dataManager.createPoint(newPoint) 
 
     this.close()
   }

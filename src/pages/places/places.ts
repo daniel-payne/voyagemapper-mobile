@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController  } from 'ionic-angular';
+
+import { InformationPage }       from '../information/information'
+import { AddPlacePage }          from '../add-place/add-place'
+
+import { DataManager }           from '../../data/DataManager'
 
 @IonicPage()
 @Component({
@@ -8,11 +13,34 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class PlacesPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    private  navController:          NavController, 
+    private  navParams:              NavParams,
+    private  dataManager:            DataManager,
+    public   modalController:        ModalController,
+  ) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad PlacesPage');
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  showInformation(target){
+    //this.dataManager.chooseInformation(target)
+    this.navController.push(InformationPage)
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  addPlace(){    
+
+    let addPlaceModal = this.modalController.create(AddPlacePage);
+    
+    addPlaceModal.present();
+
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

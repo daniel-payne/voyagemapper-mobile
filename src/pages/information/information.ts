@@ -1,7 +1,7 @@
 import { Component }                           from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { StoreManager } from '../../data/StoreManager'
+import { DataManager }     from '../../data/DataManager'
 
 @IonicPage()
 @Component({
@@ -13,9 +13,9 @@ export class InformationPage {
   selectedSegement: string = 'COUNTY'
 
   constructor(
-    public  navCtrl:          NavController, 
-    public  navParams:        NavParams,
-    public  storeManager:     StoreManager,
+    private  navCtrl:          NavController, 
+    private  navParams:        NavParams,
+    private  dataManager:      DataManager,
   ) {
   }
 

@@ -1,13 +1,12 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Data <small>{{dataManager.session.isAnonymous ? 'Anonymous' : 'Loged-in'}}</small></ion-title>
+    <ion-title>Data <small>{{dataManager.authorization.isLogedin ? dataManager.authorization.email : 'Anonymous'}}</small></ion-title>
 
-    <ion-buttons end>
-      <button ion-button color="secondary" (click)="loadCache()" >Cache</button>          
-      <button ion-button color="secondary" (click)="loadUser()" >Login</button>
-      <button ion-button color="secondary" (click)="loadRevoke()" >Logout</button>
-      <button ion-button color="secondary" (click)="loadPosition()" >Position</button>
+    <ion-buttons end>         
+      <button ion-button color="secondary" (click)="login()" >Login</button>
+      <button ion-button color="secondary" (click)="logout()" >Logout</button>
+      <button ion-button color="secondary" (click)="refresh()" >Refresh</button>
       <button ion-button color="danger"    (click)="addPlace()" >Place</button>
       <button ion-button color="danger"    (click)="addTravel()" >Travel</button>
     </ion-buttons>
@@ -23,10 +22,21 @@
       <div class="col">
         <ion-list>
           <ion-list-header>
-            Points {{dataManager.points.length}}
+            Points {{dataManager.points.size}}
           </ion-list-header>
-          <ion-item *ngFor="let item of dataManager.points">
-            {{item.fullName}} <small>{{item.type}}</small>
+          <ion-item>
+            {{dataManager.currentPosition.fullName}}  
+            {{dataManager.currentPosition.countyIncidents  ? dataManager.currentPosition.countyIncidents.length  : undefined}}
+            {{dataManager.currentPosition.stateIncidents   ? dataManager.currentPosition.stateIncidents.length   : undefined}}
+            {{dataManager.currentPosition.countryIncidents ? dataManager.currentPosition.countryIncidents.length : undefined}}
+          </ion-item>
+          <ion-item *ngFor="let item of dataManager.points.toArray()">
+            <small>{{item.pointType}}</small> 
+            {{item.fullName}} 
+            {{item.countyIncidents  ? item.countyIncidents.length  : undefined}}
+            {{item.stateIncidents   ? item.stateIncidents.length   : undefined}}
+            {{item.countryIncidents ? item.countryIncidents.length : undefined}}
+            <small>{{item.contextReference}}</small> 
           </ion-item>
 
         </ion-list>
@@ -35,9 +45,9 @@
       <div class="col">
         <ion-list>
           <ion-list-header>
-            Countries {{dataManager.countries.length}}
+            Countries {{dataManager.countries.size}}
           </ion-list-header>
-          <ion-item *ngFor="let item of dataManager.countries">
+          <ion-item *ngFor="let item of dataManager.countries.toArray()">
             {{item.name}}  - {{item.countryNo}}
           </ion-item>
 
@@ -47,10 +57,11 @@
       <div class="col">
         <ion-list>
           <ion-list-header>
-            Incidents {{dataManager.incidents.length}}
+            Incidents {{dataManager.incidents.size}}
           </ion-list-header>
-          <ion-item *ngFor="let item of dataManager.incidents">
+          <ion-item *ngFor="let item of dataManager.incidents.toArray()">
             {{item.incidentType}}  - {{item.incidentId}}
+            <small>{{item.contextReference}}</small> 
           </ion-item>
 
         </ion-list>

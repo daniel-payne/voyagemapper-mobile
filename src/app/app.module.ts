@@ -9,7 +9,6 @@ import { IonicStorageModule }                           from '@ionic/storage';
 
 import { Geolocation } from '@ionic-native/geolocation';
 
-import { StoreManager }    from '../data/StoreManager'
 import { DataManager }     from '../data/DataManager'
 
 import { MyApp }    from './app.component';
@@ -32,7 +31,7 @@ import { AddTravelPageModule }     from '../pages/add-travel/add-travel.module'
 @NgModule({
   declarations: [
     MyApp,
-    HomePage 
+    HomePage
   ],
   imports: [
     BrowserModule,
@@ -66,9 +65,9 @@ import { AddTravelPageModule }     from '../pages/add-travel/add-travel.module'
     SplashScreen,
     Geolocation,
     // DatePicker,
+
     {provide: ErrorHandler, useClass: IonicErrorHandler},
 
-    StoreManager,
     DataManager,
 
     {provide: 'REST_URL', useValue: 'http://localhost:1337/'}

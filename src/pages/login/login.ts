@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { StoreManager } from '../../data/StoreManager'
+import { DataManager } from '../../data/DataManager'
 
 import { HomePage }  from '../home/home' 
 
@@ -15,7 +15,7 @@ export class LoginPage {
   constructor(
     public navCtrl:           NavController, 
     public navParams:         NavParams, 
-    public storeManager:      StoreManager
+    public dataManager:       DataManager
   ) {
   }
 
@@ -24,7 +24,7 @@ export class LoginPage {
   }
 
   useAnonymously(){
-    this.storeManager.loadAnonymously()
+    //this.dataManager.loadAnonymously()
 
     this.navCtrl.setRoot(HomePage) 
   }
