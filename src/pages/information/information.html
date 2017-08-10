@@ -1,19 +1,19 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{dataManager.selectedPoint.fullName}}</ion-title> 
+    <ion-title>{{dataManager.selectedPoint.primaryName}}</ion-title> 
   </ion-navbar>
 
  
   <ion-segment [(ngModel)]="selectedSegement" (ionChange)="selectionChanged($event)">
     <ion-segment-button value="COUNTY">
-      Cambridgshire
+      {{dataManager.selectedPoint.context.countyName}}
     </ion-segment-button>
     <ion-segment-button value="STATE">
-      England
+      {{dataManager.selectedPoint.context.stateName}}
     </ion-segment-button>
     <ion-segment-button value="COUNTRY">
-      United Kingdom
+      {{dataManager.selectedPoint.context.countryName}}
     </ion-segment-button>
   </ion-segment>
  
@@ -25,11 +25,11 @@
 <ion-list>
   <ion-item-divider color="light">Indicdents</ion-item-divider>
 
-  <ion-item-sliding *ngFor="let item of [] ">
+  <ion-item-sliding *ngFor="let item of displayIndicdents">
     <ion-item>
-      <h2>{{item[1].incidentType}}</h2>
-      <p style="white-space: normal;">{{item[1].incidentDescription}}</p>
-      <div>{{item[1].perpetratorDescription}}</div>
+      <h2>{{item.incidentType}}</h2>
+      <p style="white-space: normal;">{{item.incidentDescription}}</p>
+      <div>{{item.perpetratorDescription}}</div>
     </ion-item>
     <ion-item-options side="right">
       <button ion-button color="danger">

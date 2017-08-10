@@ -14,15 +14,16 @@
       </button>  
     </ion-item-divider>
 
-      <ion-item-sliding *ngFor="let item of dataManager.userPlaces">
+      <ion-item-sliding *ngFor="let item of dataManager.userPlaces" (click)="showInformation(item)" >
         <button ion-item>
           <ion-avatar item-left>
             <ion-icon [name]="item.pointType | typeIcon "></ion-icon>
           </ion-avatar>
-          <h2>{{item.fullName}}</h2>
-          <ion-badge item-right [color]="item.countyIncidents.length  | incidentColor" >{{item.countyIncidents.length}}</ion-badge>
-          <ion-badge item-right [color]="item.stateIncidents.length   | incidentColor" >{{item.stateIncidents.length}}</ion-badge>
-          <ion-badge item-right [color]="item.countryIncidents.length | incidentColor" >{{item.countryIncidents.length}}</ion-badge>
+          <h2>{{item.primaryName}}</h2>
+          <p>{{item.secondaryName}}</p>
+          <ion-badge item-right [color]="item.context.countyIncidents.length  | incidentColor" >{{item.context.countyIncidents.length}}</ion-badge>
+          <ion-badge item-right [color]="item.context.stateIncidents.length   | incidentColor" >{{item.context.stateIncidents.length}}</ion-badge>
+          <ion-badge item-right [color]="item.context.countryIncidents.length | incidentColor" >{{item.context.countryIncidents.length}}</ion-badge>
         </button>
             <ion-item-options side="right">
           <button ion-button color="danger">

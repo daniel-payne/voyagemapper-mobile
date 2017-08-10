@@ -11,6 +11,7 @@ import { DataManager }     from '../../data/DataManager'
 export class InformationPage {
 
   selectedSegement: string = 'COUNTY'
+  displayIndicdents: any[] = undefined
 
   constructor(
     private  navCtrl:          NavController, 
@@ -24,10 +25,12 @@ export class InformationPage {
   }
 
   selectionChanged(event){
+    let context = this.dataManager.selectedPoint.context
+    
     switch(this.selectedSegement) {
-      // case 'COUNTRY':   this.selected$ = this.countryIncidents$;    break;
-      // case 'STATE':     this.selected$ = this.stateIncidents$;      break;
-      // case 'COUNTY':    this.selected$ = this.countyIncidents$;     break;
+      case 'COUNTRY':   this.displayIndicdents = context.countryIncidents;    break;
+      case 'STATE':     this.displayIndicdents = context.stateIncidents;      break;
+      case 'COUNTY':    this.displayIndicdents = context.countyIncidents;     break;
     }
   }
 }

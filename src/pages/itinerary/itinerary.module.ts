@@ -1,6 +1,7 @@
 import { NgModule }        from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ItineraryPage }   from './itinerary';
+import { MaterialIconsModule }                          from 'ionic2-material-icons'
 
 import { PipesModule }         from '../../pipes/pipes.module';
 
@@ -10,7 +11,8 @@ import { PipesModule }         from '../../pipes/pipes.module';
   ],
   imports: [
     IonicPageModule.forChild(ItineraryPage),
-    PipesModule
+    PipesModule,
+    MaterialIconsModule
   ],
   exports: [
     ItineraryPage

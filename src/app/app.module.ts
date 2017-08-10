@@ -14,6 +14,9 @@ import { DataManager }     from '../data/DataManager'
 import { MyApp }    from './app.component';
 import { HomePage } from '../pages/home/home';
 
+//import { ItineraryPage }     from '../pages/itinerary/itinerary'
+//import { PlacesPage }        from '../pages/places/places'
+
 import { ItineraryPageModule }     from '../pages/itinerary/itinerary.module'
 import { PlacesPageModule }        from '../pages/places/places.module'
 import { PeoplePageModule }        from '../pages/people/people.module'
@@ -36,9 +39,15 @@ import { AddTravelPageModule }     from '../pages/add-travel/add-travel.module'
   imports: [
     BrowserModule,
     HttpModule,
-    
+
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {}, {
+      links: [
+ //       { component: ItineraryPage, name: 'Itinerary', segment: 'itinerary' },
+ //       { component: PlacesPage,    name: 'Places',    segment: 'places' }
+      ]
+    }),
+
 
     ItineraryPageModule,
     PlacesPageModule,

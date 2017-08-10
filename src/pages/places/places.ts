@@ -26,9 +26,10 @@ export class PlacesPage {
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  
   showInformation(target){
-    //this.dataManager.chooseInformation(target)
+    this.dataManager.choosePoint(target)
+    
     this.navController.push(InformationPage)
   }
 

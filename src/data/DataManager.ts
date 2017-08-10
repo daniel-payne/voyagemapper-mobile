@@ -13,22 +13,22 @@ import { findCountryName }    from './countries'
 
 const CURRENT_POSITION = 'CUP'
 
-function extractContext(fromContext){ 
-  const numbers = fromContext.split(':')
-  let result = {
-    countryNo:     undefined,
-    stateNo:       undefined,
-    countyNo:      undefined,
-    ConurbationId: undefined,
-  }
+// function extractContext(fromContext){ 
+//   const numbers = fromContext.split(':')
+//   let result = {
+//     countryNo:     undefined,
+//     stateNo:       undefined,
+//     countyNo:      undefined,
+//     ConurbationId: undefined,
+//   }
 
-  if (numbers.length > 0) {result.countryNo     = parseInt(fromContext.split(':')[0], 10)}
-  if (numbers.length > 1) {result.stateNo       = parseInt(fromContext.split(':')[1], 10)}
-  if (numbers.length > 2) {result.countyNo      = parseInt(fromContext.split(':')[2], 10)}
-  if (numbers.length > 3) {result.ConurbationId = parseInt(fromContext.split(':')[3], 10)}
+//   if (numbers.length > 0) {result.countryNo     = parseInt(fromContext.split(':')[0], 10)}
+//   if (numbers.length > 1) {result.stateNo       = parseInt(fromContext.split(':')[1], 10)}
+//   if (numbers.length > 2) {result.countyNo      = parseInt(fromContext.split(':')[2], 10)}
+//   if (numbers.length > 3) {result.ConurbationId = parseInt(fromContext.split(':')[3], 10)}
 
-  return result
-}
+//   return result
+// }
 
 
 @Injectable()
@@ -39,9 +39,10 @@ export class DataManager {
   cooridnates:     any     = {}
   position:        any     = { fullName: 'Position Unknown'}
 
-  countries:      Immutable.Map<string, any>    = Immutable.Map<string, any>()
+  countries:      Immutable.Map<number, any>    = Immutable.Map<number, any>()
   points:         Immutable.Map<string, any>    = Immutable.Map<string, any>()
   incidents:      Immutable.Map<string, any>    = Immutable.Map<string, any>()
+  contexts:       Immutable.Map<string, any>    = Immutable.Map<string, any>()
 
   lookbackInMonths: number = 36
 
@@ -50,7 +51,7 @@ export class DataManager {
   airportMatches:       any[] = []
   accommodationMatches: any[] = []
 
-  currentPosition:      any   = {countryIncidents: [], stateIncidents: [], countyIncidents: []}
+  currentPosition:      any   = { context: { countryIncidents: [], stateIncidents: [], countyIncidents: [] } }
   itinerary:            any[] = []
   userPlaces:           any[] = []
   groupPlaces:          any[] = []
@@ -70,24 +71,17 @@ export class DataManager {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   startup = () => {
-    return this.checkCachedAuthorization()
-      .then(session => {
 
-        return this.checkCachedPoints()
-
-      }).then( () => {      
-
-        if (this.authorization.isLogedin === true){
-          return this.loadRetrevePoints()
-        } 
-
-      }).then( () => {
-
-        this.buildIncidents()
-
-        return this.refresh()
-      
-      })
+    return this.discoverAuthorization()
+               .then(() => {
+                 return this.discoverCachedPoints() 
+               }).then(() => {
+                 if (this.authorization.isLogedin === true){
+                   return this.loadRetrevePoints()
+                 } 
+               }).then(() => {
+                 return this.refresh()
+               })
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,16 +141,21 @@ export class DataManager {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
-  createPoint = (point) => {
-    let countryNo = extractContext(point.contextReference).countryNo
+  createPoint = (data) => {
+
+    let point = this.findPoint(data.pointType, data.fullName, data.dateAtPoint)
+
+    Object.assign(point, data)
     
-    this.assignPoint(point) 
-    this.findCountry(countryNo)
-    this.buildIncidents(countryNo)
+    this.cachePoint(point) 
+
+    this.buildIncidents(point.countryNo)
 
     if (this.authorization.isLogedin === true){
+
       this.loadAddPoint(point).then(() =>{   
-      })
+      }) 
+
     }
   }
 
@@ -167,41 +166,57 @@ export class DataManager {
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+  discoverAuthorization = () => {
 
-  checkCachedAuthorization = () => {
-
-    return this.storage.get('AUTHORIZATION').then((data) => {
-
+    return this.storage.get('AUTHORIZATION').then(data => {
       if (data){
 
-        this.authorization = data 
+          this.authorization = data 
 
       }  
 
+      return this.authorization
     })
 
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  checkCachedPoints = () => {
+  discoverCachedPoints =  () => {
+    
+    return this.storage.keys().then(keys => {
+      let promises = []
 
-    return this.storage
-               .keys()
-               .then(keys => {
-
-      keys.forEach(key => {
+      keys.forEach( key => {
+    
         if (key.indexOf('POINT') === 0){
-          this.storage.get(key).then((data) => {
-            let countryNo = extractContext(data.contextReference).countryNo
+          
+          promises.push( this.storage.get(key).then(data => {
 
-            this.findCountry(countryNo)
+              let point = this.findPoint(data.pointType, data.fullName, data.dateAtPoint)
 
-            this.assignPoint(data)
-          })
+              Object.assign(point, data)
+
+              this.findContext(point.contextReference)
+
+          }))
+
+        } else if (key.indexOf('CONTEXT') === 0){
+          
+          promises.push( this.storage.get(key).then(data => {
+
+              let context = this.findContext(data.contextReference)
+
+              Object.assign(context, data)
+
+          }))
+
         }
+        
       })
 
+      return Promise.all(promises) 
     })
 
   }
@@ -217,8 +232,13 @@ export class DataManager {
     return this.http.post(this.restUrl + `itinerary/add/point`, point, new RequestOptions({ headers })).toPromise().then((data) => {
 
       let newPoint = data.json()[0]
+
+      let point = this.findPoint(newPoint.pointType, newPoint.fullName. newPoint.dateAtPoint)
+
+      newPoint = Object.assign({}, point, newPoint)
       
-      this.assignPoint(newPoint)
+      this.cachePoint(newPoint)
+
     })
 
   }
@@ -272,14 +292,16 @@ export class DataManager {
 
       headers.append('session', this.authorization.session)  
 
-      this.http.get(this.restUrl + `itinerary/retrieve/points`, new RequestOptions({ headers }) ).toPromise().then((data) => {
+      return this.http.get(this.restUrl + `itinerary/retrieve/points`, new RequestOptions({ headers }) ).toPromise().then((data) => {
 
-        let newPoint = data.json().forEach( (newPoint) => {
-          const countryNo = extractContext(newPoint.contextReference).countryNo
+        data.json().forEach( (data) => {
 
-          this.findCountry(countryNo)
+        let point    = this.findPoint(data.pointType, data.fullName. data.dateAtPoint)
 
-          this.assignPoint(newPoint)
+        let newPoint = Object.assign({}, point, data)
+          
+        this.cachePoint(newPoint)
+
         })
 
       })
@@ -313,22 +335,51 @@ export class DataManager {
     
   loadCurrentPosition = (latitude, longitude) => {
 
-    return this.http.get(this.restUrl + `geographic/find/contexts?latitude=${latitude}&longitude=${longitude}`)
+    return this.http.get(this.restUrl + `geographic/find/context?latitude=${latitude}&longitude=${longitude}`)
                     .toPromise()
                     .then((response) => {
 
       const data: any = response.json()[0];
 
-      const countryNo = extractContext(data.contextReference).countryNo
+      const countryNo = +data.contextReference.split(':')[0]
 
       this.findCountry(countryNo)
+      this.findContext(data.contextReference)
 
       this.position = Object.assign({}, this.position, data)
-
 
     });
 
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  loadListContexts = (list) => {
+
+    return this.http.get(this.restUrl + `geographic/list/contexts?list=${list}`).toPromise().then((data) => {
+
+      data.json().forEach( (item) => {
+  
+        let context    = this.findContext(item.contextReference)
+
+        let words      = item.fullName.split(',')
+ 
+        words.reverse()
+
+        if (words.length > 0 && words[0] !== '') {item.countryName   = words[0].trim()}
+        if (words.length > 1 && words[1] !== '') {item.stateName     = words[1].trim()}
+        if (words.length > 2 && words[2] !== '') {item.countyName    = words[2].trim()}
+        if (words.length > 3 && words[3] !== '') {item.countyName    = words[3].trim()}
+
+        this.cacheContext(item)
+        
+        Object.assign(context, item)
+          
+      })
+
+    })
+ 
+  } 
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
@@ -463,6 +514,17 @@ export class DataManager {
 
               Object.assign(found, item)
 
+              if (found.contextReference){
+
+                let numbers = found.contextReference.split(':')
+
+                if (numbers.length > 0 && numbers[0] !== '') {found.countryNo     = parseInt(numbers[0], 10)}
+                if (numbers.length > 1 && numbers[1] !== '') {found.stateNo       = parseInt(numbers[1], 10)}
+                if (numbers.length > 2 && numbers[2] !== '') {found.countyNo      = parseInt(numbers[2], 10)}
+                if (numbers.length > 3 && numbers[3] !== '') {found.conurbationId = parseInt(numbers[3], 10)}
+
+              }
+
               this.storage.set('INCIDENT'+ found.incidentId, found)
             })
 
@@ -507,16 +569,43 @@ export class DataManager {
       }
 
     }).then(() => {
-      this.createIncidentHierarchy()
+      this.buildContexts()
     })
 
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  private buildContexts(){
 
-  private createIncidentHierarchy(){
+    let checkContexts = []
 
-    this.currentPosition     = {}
+    this.contexts.forEach(item => {
+      if (! item.tzId){
+        checkContexts.push(item.contextReference)
+      }
+    })
+ 
+    if (checkContexts.length === 0){
+
+      this.buildDisplayData()
+
+    } else {
+
+      this.loadListContexts(checkContexts.join(',')).then(() => {
+
+        this.buildDisplayData()
+
+      })
+
+    }
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private buildDisplayData(){
+
     this.itinerary           = []
     this.userPlaces          = []
     this.groupPlaces         = []
@@ -524,13 +613,11 @@ export class DataManager {
 
     this.currentPosition ={
        fullName:          this.position.fullName,
+       primaryName:       this.position.fullName.split(',')[0],
+       secondaryName:     this.position.fullName.split(',').slice(1),
        contextReference:  this.position.contextReference,
-       countryIncidents:  [], 
-       stateIncidents:    [], 
-       countyIncidents:   []
+       context:           this.findContext(this.position.contextReference)
     }
-
-    this.applyIncidentHierarchy(this.currentPosition)
 
     this.points.forEach(item =>{
       let newPlace = Object.assign({}, item)
@@ -540,27 +627,7 @@ export class DataManager {
       newPlace.primaryName   = names[0]
       newPlace.secondaryName = names.slice(1)
 
-      const contexts = newPlace.secondaryName.slice(1)
-      
-      if (contexts.length  > 2) {
-        newPlace.countyName    = contexts[0] 
-        newPlace.stateName     = contexts[1] 
-        newPlace.countryName   = contexts[2] 
-      } else if (contexts.length  > 1) {
-        newPlace.countyName    = contexts[0] 
-        newPlace.stateName     = 'state' 
-        newPlace.countryName   = contexts[1] 
-      } else if (contexts.length  > 0) {
-        newPlace.countyName    = 'county' 
-        newPlace.stateName     = 'state' 
-        newPlace.countryName   = contexts[0] 
-      } else {
-        newPlace.countyName    = 'county' 
-        newPlace.stateName     = 'state' 
-        newPlace.countryName   = 'country'
-      }
-
-      this.applyIncidentHierarchy(newPlace)
+      newPlace.context = this.findContext(item.contextReference)
 
       switch(newPlace.pointType) {
           case 'CON':  newPlace.pointName = 'Conurbation';       break;
@@ -579,8 +646,7 @@ export class DataManager {
       } else if (['FLD', 'FLA', 'ACH'].indexOf( newPlace.pointType) >-1 ){
         this.itinerary.push(newPlace) 
       }
-
-      
+   
     })
 
     this.itinerary = this.itinerary.sort((a,b) => {
@@ -593,44 +659,32 @@ export class DataManager {
       }
     })
 
-  }
+    this.contexts.forEach(context => {
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      context.countyIncidents  = []
+      context.stateIncidents   = []
+      context.countryIncidents = [] 
 
-  private applyIncidentHierarchy(target){
+      this.incidents.forEach(item => {
 
-    if (! target.contextReference){
-      return
-    }
+        if (item.conurbationId !== undefined && item.conurbationId === context.conurbationId){
+          context.countyIncidents.push(item)  
+        } else if (item.contextReference === context.contextReference){
+          context.countyIncidents.push(item)  
+        } else if (item.stateNo === context.stateNo && item.countryNo === context.countryNo){
+          context.stateIncidents.push(item)  
+        } else if (item.countryNo === context.countryNo){
+          context.countryIncidents.push(item)  
+        }
 
-    const targetContext = extractContext(target.contextReference)
-    const country   = this.findCountry(targetContext.countryNo)
-
-    target.countyIncidents  = []
-    target.stateIncidents   = []
-    target.countryIncidents = [] 
-
-    this.incidents.forEach(item => {
-      const itemContext = extractContext(item.contextReference)
-
-      if (itemContext.ConurbationId === targetContext.ConurbationId){
-        target.countyIncidents.push(item)  
-      } else if (item.contextReference === target.contextReference){
-        target.countyIncidents.push(item)  
-      } else if (itemContext.stateNo === targetContext.stateNo && itemContext.countryNo === targetContext.countryNo){
-        target.stateIncidents.push(item)  
-      } else if (itemContext.countryNo === targetContext.countryNo){
-        target.countryIncidents.push(item)  
-      }
-
+      })
     })
 
-
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private assignPoint(point){
+  private cachePoint(point){
 
     let reference = point.dateAtPoint ? 
                       `${point.pointType}-${point.fullName} ${point.dateAtPoint}` 
@@ -640,6 +694,16 @@ export class DataManager {
     this.points = this.points.set(reference, point)
 
     this.storage.set(`POINT ${reference}`, point)
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private cacheContext(context){
+   
+    this.contexts = this.points.set(context.contextReference, context)
+
+    this.storage.set(`CONTEXT ${context.contextReference}`, context)
 
   }
 
@@ -660,6 +724,14 @@ export class DataManager {
 
       this.points = this.points.set(reference, found)
 
+    } 
+      
+    if (! found.country && found.countyNo){
+      found.country = this.findCountry(found.countyNo)
+    }
+
+    if (! found.context && found.contextReference){
+      found.context = this.findContext(found.contextReference)
     }
 
     return found
@@ -667,7 +739,7 @@ export class DataManager {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private findCountry(countryNo){
+  private findCountry(countryNo: number){
 
     let found =  this.countries.get(countryNo)
 
@@ -694,6 +766,53 @@ export class DataManager {
       found = {incidentId}
 
       this.incidents = this.incidents.set(incidentId, found)
+    }
+
+    return found
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private findContext(contextReference){
+
+    let found =  this.contexts.get(contextReference)
+
+    if (! found){
+      let numbers
+     
+      found = {
+        contextReference,
+
+        country:       undefined,
+
+        countryNo:     undefined,
+        stateNo:       undefined,
+        countyNo:      undefined,
+        conurbationId: undefined,
+
+        countyName:  'County', 
+        stateName:   'State', 
+        countryName: 'Country',
+
+        countyIncidents:  [], 
+        stateIncidents:   [],
+        countryIncidents: [],
+
+      }
+
+      if (contextReference){
+
+        let numbers = found.contextReference.split(':')
+
+        if (numbers.length > 0 && numbers[0] !== '') {found.countryNo     = parseInt(numbers[0], 10)}
+        if (numbers.length > 1 && numbers[1] !== '') {found.stateNo       = parseInt(numbers[1], 10)}
+        if (numbers.length > 2 && numbers[2] !== '') {found.countyNo      = parseInt(numbers[2], 10)}
+        if (numbers.length > 3 && numbers[3] !== '') {found.conurbationId = parseInt(numbers[3], 10)}
+
+        this.contexts = this.contexts.set(contextReference, found)
+      }
+
     }
 
     return found

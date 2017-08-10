@@ -5,7 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IncidentColorPipe implements PipeTransform {
   transform(value: number, ...args) {
-    if (value === 0) return 'secondary'
+    if (value === undefined) return 'default'
+    if (value === 0)         return 'secondary'
     return 'danger'
   }
 }
