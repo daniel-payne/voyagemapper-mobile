@@ -1,14 +1,16 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Data <small>{{dataManager.authorization.isLogedin ? dataManager.authorization.email : 'Anonymous'}}</small></ion-title>
+    <ion-title (click)="openDisplay()">Data <small></small></ion-title>
 
     <ion-buttons end>         
-      <button ion-button color="secondary" (click)="login()" >Login</button>
-      <button ion-button color="secondary" (click)="logout()" >Logout</button>
-      <button ion-button color="secondary" (click)="refresh()" >Refresh</button>
-      <button ion-button color="danger"    (click)="addPlace()" >Place</button>
-      <button ion-button color="danger"    (click)="addTravel()" >Travel</button>
+      <button ion-button color="secondary" (click)="startup()"    >Startup</button>
+      <button ion-button color="secondary" (click)="login()"      >Login</button>
+      <button ion-button color="secondary" (click)="logout()"     >Logout</button>
+      <button ion-button color="secondary" (click)="refresh()"    >Refresh</button>
+
+      <button ion-button color="danger"    (click)="addPlace()"   >Place</button>
+      <button ion-button color="danger"    (click)="addTravel()"  >Travel</button>
     </ion-buttons>
   </ion-navbar>
 
@@ -19,52 +21,81 @@
 
     <div class="item row">
 
-      <div class="col">
-        <ion-list>
-          <ion-list-header>
-            Points {{dataManager.points.size}}
-          </ion-list-header>
-          <ion-item>
-            {{dataManager.currentPosition.fullName}}  
-            {{dataManager.currentPosition.countyIncidents  ? dataManager.currentPosition.countyIncidents.length  : undefined}}
-            {{dataManager.currentPosition.stateIncidents   ? dataManager.currentPosition.stateIncidents.length   : undefined}}
-            {{dataManager.currentPosition.countryIncidents ? dataManager.currentPosition.countryIncidents.length : undefined}}
-          </ion-item>
-          <ion-item *ngFor="let item of dataManager.points.toArray()">
-            <small>{{item.pointType}}</small> 
-            {{item.fullName}} 
-            {{item.countyIncidents  ? item.countyIncidents.length  : undefined}}
-            {{item.stateIncidents   ? item.stateIncidents.length   : undefined}}
-            {{item.countryIncidents ? item.countryIncidents.length : undefined}}
-            <small>{{item.contextReference}}</small> 
-          </ion-item>
+      <div class="col" >
+        <h5 padding>Points : {{(points$ | async).count()}}</h5>
 
-        </ion-list>
+        <ion-card>
+         <ion-card-header>   
+           {{ (user$   | async ).email              }}  
+        </ion-card-header>
+         <ion-card-content>   
+          {{ (user$   | async ).session             }} 
+          <hr/>
+          {{ (user$   | async ).pointList           }} 
+        </ion-card-content>
+        </ion-card>
+
+         <ion-card>
+          <ion-card-header>
+            {{ (position$ | async).fullName }}
+          </ion-card-header>
+          <ion-card-content>
+           {{(position$ | async).contextReference}}
+         </ion-card-content>
+        </ion-card> 
+
+        <ion-card *ngFor="let item of (points$ | async).toArray()">
+         <ion-card-header>
+           {{item.fullName}}
+         </ion-card-header>
+         <ion-card-content>
+           <strong>{{item.pointId}}</strong>
+           {{item.contextReference}} 
+         </ion-card-content>
+       </ion-card> 
+ 
       </div>
 
       <div class="col">
-        <ion-list>
-          <ion-list-header>
-            Countries {{dataManager.countries.size}}
-          </ion-list-header>
-          <ion-item *ngFor="let item of dataManager.countries.toArray()">
-            {{item.name}}  - {{item.countryNo}}
-          </ion-item>
+        <h5 padding>Contexts : {{(contexts$ | async).count()}}</h5>
 
-        </ion-list>
+        <ion-card *ngFor="let item of (contexts$ | async).toArray()">
+          <ion-card-header>
+            {{item.contextReference}}
+          </ion-card-header>
+          <ion-card-content>
+            {{item.fullName}}
+          </ion-card-content>
+        </ion-card> 
+ 
       </div>
 
       <div class="col">
-        <ion-list>
-          <ion-list-header>
-            Incidents {{dataManager.incidents.size}}
-          </ion-list-header>
-          <ion-item *ngFor="let item of dataManager.incidents.toArray()">
-            {{item.incidentType}}  - {{item.incidentId}}
-            <small>{{item.contextReference}}</small> 
-          </ion-item>
+         <h5 padding>Countries : {{(countries$ | async).count()}}</h5>
 
-        </ion-list>
+         <ion-card *ngFor="let item of (countries$ | async).toArray()">
+          <ion-card-header>
+            {{item.countryNo}}
+          </ion-card-header>
+          <ion-card-content>
+            {{item.fullName}}
+          </ion-card-content>
+        </ion-card>  
+
+      </div>
+
+      <div class="col">
+        <h5 padding>Incidents : {{(incidents$ | async).count()}}</h5>
+
+        <ion-card *ngFor="let item of (incidents$ | async).toArray()">
+        <ion-card-header>
+          {{item.incidentId}}
+        </ion-card-header>
+        <ion-card-content>
+          {{item.incidentType}}
+        </ion-card-content>
+      </ion-card>   
+
       </div>
 
     </div>

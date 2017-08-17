@@ -4,9 +4,9 @@ import { StatusBar }    from '@ionic-native/status-bar'
 import { SplashScreen } from '@ionic-native/splash-screen' 
 
 
-import { HomePage }     from '../pages/home/home' 
-import { LoginPage }    from '../pages/login/login' 
-// import { DataPage }        from '../pages/data/data' 
+//import { HomePage }     from '../pages/home/home' 
+//import { LoginPage }    from '../pages/login/login' 
+import { DataPage }        from '../pages/data/data' 
 
 import { DataManager }     from '../data/DataManager'
 
@@ -32,15 +32,17 @@ export class MyApp {
 
       }).then(() => { 
 
-        dataManager.startup().then( () => {
+        // dataManager.startup().then( () => {
 
-          if (dataManager.authorization.isFirstTime === true) {
-            this.rootPage = LoginPage
-          } else {
-            this.rootPage = HomePage  
-          } 
+        //   if (dataManager.authorization.isFirstTime === true) {
+        //     this.rootPage = LoginPage
+        //   } else {
+        //     this.rootPage = HomePage  
+        //   } 
           
-        })
+        // })
+
+        this.rootPage = DataPage
 
       })
    

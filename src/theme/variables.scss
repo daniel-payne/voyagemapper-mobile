@@ -25,10 +25,10 @@ $font-path: "../assets/fonts";
 
 $colors: (
   primary:    #26A69A,
-  secondary:  #32db64,
-  danger:     #f53d3d,
-  light:      #f4f4f4,
-  dark:       #222
+  secondary:  #7DC885,
+  danger:     #9F5272,
+  light:      #F1F1F1,
+  dark:       #293959
 );
 
 
@@ -70,15 +70,14 @@ $colors: (
 
 @import "ionic.ionicons";
 
-
 // Fonts
 // --------------------------------------------------
 
 @import "roboto";
 @import "noto-sans";
 
-
-$toolbar-background: #26A69A;
+$background-color:   #DeE1E1;
+$toolbar-background: #293959;
 
 // $item-ios-divider-background: #B2DFDB !important;
 // $item-md-divider-background: #B2DFDB !important;

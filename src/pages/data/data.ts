@@ -1,11 +1,16 @@
 import { Component } from '@angular/core'
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular'
-import { AlertController } from 'ionic-angular'
+import { IonicPage, NavController, NavParams } from 'ionic-angular'
+import { AlertController, ModalController  }   from 'ionic-angular'
+import { select, NgRedux     }                          from 'ng2-redux' 
 // import { DatePicker } from '@ionic-native/date-picker'
+
+import { DataConnector }         from '../../data/connector' 
+import { IApplicationState }     from '../../app/app.reducer'
 
 import { DataManager }    from '../../data/DataManager'
 import { AddPlacePage }   from '../add-place/add-place'
 import { AddTravelPage }  from '../add-travel/add-travel'
+import { DisplayPage }    from '../display/display'
 
 @IonicPage()
 @Component({
@@ -14,12 +19,25 @@ import { AddTravelPage }  from '../add-travel/add-travel'
 })
 export class DataPage {
 
+  @select(['itinerary',   'user'         ]) user$   
+  @select(['itinerary',   'points'       ]) points$   
+ 
+  @select(['geographic',  'position'     ]) position$   
+  @select(['geographic',  'contexts'     ]) contexts$   
+  @select(['geographic',  'countries'    ]) countries$   
+
+  @select(['risk',        'incidents'    ]) incidents$   
+ 
   constructor(
-    public navCtrl:           NavController, 
+    public navController:     NavController, 
     public navParams:         NavParams, 
     public alertController:   AlertController,
+    public modalController:   ModalController,
+
+    private dataConnector:    DataConnector,
+
+    private ngRedux:          NgRedux<IApplicationState>,
     public dataManager:       DataManager,
-    public modalController:   ModalController
     // public datePicker:        DatePicker
   ) {
   }
@@ -30,7 +48,21 @@ export class DataPage {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  openDisplay(){  
+    this.navController.setRoot(DisplayPage)
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  startup(){  
+    this.dataConnector.startup()
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   login(){  
+
+    let email = this.ngRedux.getState().itinerary.user.email 
 
     let prompt = this.alertController.create({
       title: 'Login',
@@ -38,7 +70,7 @@ export class DataPage {
         {
           name: 'email',
           placeholder: 'EMail',
-          value: 'testuser@test.net'
+          value: email
         },
          {
           name: 'password',
@@ -51,7 +83,7 @@ export class DataPage {
         {
           text: 'Login',
           handler: data => {
-            this.dataManager
+            this.dataConnector
                 .login(data.email, data.password)
           }
         }
@@ -66,7 +98,7 @@ export class DataPage {
 
   logout(){
 
-     this.dataManager.logout() 
+    this.dataConnector.logout() 
         
   }
 
@@ -74,7 +106,7 @@ export class DataPage {
 
   refresh(){    
 
-    this.dataManager.refresh() 
+    this.dataConnector.refresh() 
 
   }
 
@@ -82,53 +114,53 @@ export class DataPage {
   
   private findCities = (searchTerm, targetPrompt, falloverPrompt?) => {
 
-    if (searchTerm.length === 0){
-      return
-    }
+    // if (searchTerm.length === 0){
+    //   return
+    // }
 
-    this.dataManager.matchConurbation(searchTerm).then((results) => {
-      targetPrompt.data.inputs.length = 0
+    // this.dataManager.matchConurbation(searchTerm).then((results) => {
+    //   targetPrompt.data.inputs.length = 0
 
-      results.forEach((item, i) =>{
-        targetPrompt.data.inputs.push({
-          type: 'radio',
-          value: item,
-          label: item.fullName,
-          checked: i===0
-        })
-      })
+    //   results.forEach((item, i) =>{
+    //     targetPrompt.data.inputs.push({
+    //       type: 'radio',
+    //       value: item,
+    //       label: item.fullName,
+    //       checked: i===0
+    //     })
+    //   })
 
-      if (this.dataManager.conurbationMatches.length > 0){
-        targetPrompt.present()
-      } else if (falloverPrompt) {
-        this.findTowns(searchTerm, falloverPrompt)
-      }
+    //   if (this.dataManager.conurbationMatches.length > 0){
+    //     targetPrompt.present()
+    //   } else if (falloverPrompt) {
+    //     this.findTowns(searchTerm, falloverPrompt)
+    //   }
       
-    })
+    // })
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private findTowns = (searchTerm, targetPrompt) => {
 
-    if (searchTerm.length === 0){
-      return
-    }
+    // if (searchTerm.length === 0){
+    //   return
+    // }
 
-    this.dataManager.matchSettlement(searchTerm).then((results) => {
-      targetPrompt.data.inputs.length = 0
+    // this.dataManager.matchSettlement(searchTerm).then((results) => {
+    //   targetPrompt.data.inputs.length = 0
 
-      results.forEach((item, i) =>{
-        targetPrompt.data.inputs.push({
-          type: 'radio',
-          value: item,
-          label: item.fullName,
-          checked: i===0
-        })
-      })
+    //   results.forEach((item, i) =>{
+    //     targetPrompt.data.inputs.push({
+    //       type: 'radio',
+    //       value: item,
+    //       label: item.fullName,
+    //       checked: i===0
+    //     })
+    //   })
 
-      targetPrompt.present()
-    })
+    //   targetPrompt.present()
+    // })
 
   }
 
@@ -136,24 +168,24 @@ export class DataPage {
 
   private findAirports = (searchTerm, targetPrompt) => {
 
-    if (searchTerm.length === 0){
-      return
-    }
+    // if (searchTerm.length === 0){
+    //   return
+    // }
 
-    this.dataManager.matchAirport(searchTerm).then((results) => {
-      targetPrompt.data.inputs.length = 0
+    // this.dataManager.matchAirport(searchTerm).then((results) => {
+    //   targetPrompt.data.inputs.length = 0
 
-      results.forEach((item, i) =>{
-        targetPrompt.data.inputs.push({
-          type: 'radio',
-          value: item,
-          label: item.fullName,
-          checked: i===0
-        })
-      })
+    //   results.forEach((item, i) =>{
+    //     targetPrompt.data.inputs.push({
+    //       type: 'radio',
+    //       value: item,
+    //       label: item.fullName,
+    //       checked: i===0
+    //     })
+    //   })
 
-      targetPrompt.present()
-    })
+    //   targetPrompt.present()
+    // })
 
   }
 
@@ -161,24 +193,24 @@ export class DataPage {
 
   private findAccommodations = (searchTerm, context, targetPrompt) => {
 
-    if (searchTerm.length === 0){
-      return
-    }
+    // if (searchTerm.length === 0){
+    //   return
+    // }
 
-    this.dataManager.matchAccommodation(searchTerm, context).then((results) => {
-      targetPrompt.data.inputs.length = 0
+    // this.dataManager.matchAccommodation(searchTerm, context).then((results) => {
+    //   targetPrompt.data.inputs.length = 0
 
-      results.forEach((item, i) =>{
-        targetPrompt.data.inputs.push({
-          type: 'radio',
-          value: item,
-          label: item.fullName,
-          checked: i===0
-        })
-      })
+    //   results.forEach((item, i) =>{
+    //     targetPrompt.data.inputs.push({
+    //       type: 'radio',
+    //       value: item,
+    //       label: item.fullName,
+    //       checked: i===0
+    //     })
+    //   })
 
-      targetPrompt.present()
-    })
+    //   targetPrompt.present()
+    // })
 
   }
 
@@ -186,9 +218,9 @@ export class DataPage {
 
   addPlace(){    
 
-    let addPlaceModal = this.modalController.create(AddPlacePage);
+    // let addPlaceModal = this.modalController.create(AddPlacePage);
     
-    addPlaceModal.present();
+    // addPlaceModal.present();
 
   }
 
@@ -196,9 +228,9 @@ export class DataPage {
 
   addTravel(){
 
-    let addTravelModal = this.modalController.create(AddTravelPage);
+    // let addTravelModal = this.modalController.create(AddTravelPage);
     
-    addTravelModal.present();
+    // addTravelModal.present();
 
   }
 

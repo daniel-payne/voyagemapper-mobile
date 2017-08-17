@@ -15,7 +15,7 @@
     "ionic_copy": "./copy.config.js"
   },
   "dependencies": {
-    "@angular-redux/store": "^6.4.1",
+    "@angular-redux/store": "^6.5.7",
     "@angular/common": "4.0.2",
     "@angular/compiler": "4.0.2",
     "@angular/compiler-cli": "4.0.2",
