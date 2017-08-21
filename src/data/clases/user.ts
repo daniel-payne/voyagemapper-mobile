@@ -11,7 +11,7 @@ export class User {
 
   constructor(data: any) {
     this.email     = data.email
-    this.pointList = data.pointList  
+    this.pointList = data.pointList || ''
     this.session   = data.session 
 
     if (data.expires){

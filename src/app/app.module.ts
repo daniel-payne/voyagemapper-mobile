@@ -54,8 +54,8 @@ let devtools: StoreEnhancer<IApplicationState> =
     IonicStorageModule.forRoot(),
     IonicModule.forRoot(MyApp, {}, {
       links: [
- //       { component: ItineraryPage, name: 'Itinerary', segment: 'itinerary' },
- //       { component: PlacesPage,    name: 'Places',    segment: 'places' }
+      //  { component: DataPageModule,       name: 'Data',       segment: 'data'    },
+      //  { component: DisplayPageModule,    name: 'Display',    segment: 'display' }
       ]
     }),
 

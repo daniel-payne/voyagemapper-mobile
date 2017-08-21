@@ -15,6 +15,7 @@ import { User }     from './clases/user'
 import { Point }    from './clases/point' 
 import { Country }  from './clases/country' 
 import { Incident } from './clases/incident' 
+import { Match }    from './clases/match' 
 
 import { 
   loadPosition, 
@@ -24,7 +25,9 @@ import {
 } from './reducers/geographic'
 
 import { 
-  loadIncident,
+//  loadIncident,
+  loadIncidents,
+  clearRisk,
 } from './reducers/risk'
 
 import{
@@ -32,6 +35,12 @@ import{
   loadPoint,
   clearItinerary,
 } from './reducers/itinerary'
+
+
+import{
+  loadMatches,
+  clearSearch
+} from './reducers/search'
 
 
 @Injectable()
@@ -54,6 +63,8 @@ export class DataConnector {
   public startup = async () => {
 
     const user = await this.discoverUser()
+
+    this.ngRedux.dispatch( loadUser( user || new User({}) ) )
 
     if (user) { 
 
@@ -106,10 +117,14 @@ export class DataConnector {
 
     this.storage.clear()
 
-    this.cacheUser({email: user.email })
+    let newUser = new User({email: user.email })
+ 
+    this.cacheUser(newUser)
 
-    this.ngRedux.dispatch( clearItinerary() )
+    this.ngRedux.dispatch( loadUser(newUser) )
+    this.ngRedux.dispatch( clearItinerary()  )
     this.ngRedux.dispatch( clearGeographic() )
+    this.ngRedux.dispatch( clearRisk()       )
 
     await this.build()
 
@@ -130,6 +145,74 @@ export class DataConnector {
     }  
 
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  public clearMatches = async () => {
+
+    this.ngRedux.dispatch( clearSearch() ) 
+
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public matchConurbation = async (searchTerm: string) => {
+
+    return this.http.get(this.restUrl + `geographic/match/conurbations?text=${searchTerm}`).toPromise().then((data) => {
+
+       let matches = data.json().map(item => new Match(item)) 
+
+       this.ngRedux.dispatch( loadMatches(matches) )
+
+    })
+
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public matchSettlement = async (searchTerm: string) => {
+
+    return this.http.get(this.restUrl + `geographic/match/settlements?text=${searchTerm}`).toPromise().then((data) => {
+
+       let matches = data.json().map(item => new Match(item)) 
+
+       this.ngRedux.dispatch( loadMatches(matches) )
+
+    })
+
+  }   
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public addPoint = async (newPoint: Point) => {
+ 
+    const user = this.ngRedux.getState().itinerary.user
+
+    if (user.isActive() === true){
+
+      return this.postAddPoint(newPoint) 
+
+    } else {
+
+      if (user.pointList.indexOf(newPoint.pointId) === -1){
+
+        let newUser = new User(user)
+
+        newUser.pointList = `${newUser.pointList ? newUser.pointList + ',': ''}${newPoint.pointId}`
+      
+        this.cacheUser(newUser)        
+        this.cachePoint(newPoint)
+
+        this.ngRedux.dispatch( loadUser(newUser) )
+        this.ngRedux.dispatch( loadPoint(newPoint) )
+      }
+
+    }
+
+    this.ngRedux.dispatch( clearSearch() )
+
+    return this.build()
+
+  }   
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Cache Actions
@@ -155,23 +238,17 @@ export class DataConnector {
 
     return this.storage.get('USER').then(data => {
 
-      let item 
+      let item
+      let user  
 
       if (data){
 
         item = this.convertFromString(data) 
+        user = new User(item)
 
-        item = new User(item)
+      } 
 
-        this.ngRedux.dispatch( loadUser(item) )
-
-      } else {
-
-        this.ngRedux.dispatch( loadUser({}) )
-
-      }  
-
-      return item
+      return user
 
     }) 
 
@@ -183,17 +260,17 @@ export class DataConnector {
 
     return this.storage.get(`POINT ${pointId}`).then(data => {
 
-      let item 
+      let item
+      let point 
 
       if (data){
-        item = this.convertFromString(data) 
 
-        const point = new Point(item)
+        item  = this.convertFromString(data) 
+        point = new Point(item)
 
-        this.ngRedux.dispatch( loadPoint(point) )
       }   
 
-      return item  
+      return point  
 
     }) 
 
@@ -206,16 +283,16 @@ export class DataConnector {
     return this.storage.get(`CONTEXT ${contextReference}`).then(data => {
 
       let item 
+      let context
 
       if (data){
-        item = this.convertFromString(data) 
 
-        const context = new Context(item)
+        item    = this.convertFromString(data) 
+        context = new Context(item)
 
-        this.ngRedux.dispatch( loadContext(context) )
       }  
 
-      return item  
+      return context  
 
     }) 
 
@@ -228,16 +305,14 @@ export class DataConnector {
     return this.storage.get(`COUNTRY ${CountryNo}`).then(data => {
 
       let item 
+      let country
 
       if (data){
-        item = this.convertFromString(data) 
-
-        const country = new Country(item)
-
-        this.ngRedux.dispatch( loadCountry(country) )
+        item    = this.convertFromString(data) 
+        country = new Country(item)
       }  
 
-      return item  
+      return country  
 
     }) 
 
@@ -250,16 +325,14 @@ export class DataConnector {
     return this.storage.get(`INCIDENT ${incidentId}`).then(data => {
 
       let item 
+      let incident
 
       if (data){
-        item = this.convertFromString(data) 
-
-        const incident = new Incident(item)
-
-        this.ngRedux.dispatch( loadIncident(incident) )
+        item     = this.convertFromString(data) 
+        incident = new Incident(item)
       }  
 
-      return item  
+      return incident  
 
     }) 
 
@@ -271,8 +344,6 @@ export class DataConnector {
 
     this.storage.set(`USER`, JSON.stringify(user) )
 
-    this.ngRedux.dispatch( loadUser(user) )
-
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,8 +351,6 @@ export class DataConnector {
   private cacheContext = async (context) => {
 
     this.storage.set(`CONTEXT ${context.contextReference}`, JSON.stringify(context) )  
-
-    this.ngRedux.dispatch( loadContext(context) )
 
   }  
   
@@ -291,8 +360,6 @@ export class DataConnector {
 
     this.storage.set(`POINT ${point.pointId}`, JSON.stringify(point) )  
 
-    this.ngRedux.dispatch( loadPoint(point) )
-
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,8 +368,6 @@ export class DataConnector {
 
     this.storage.set(`COUNTRY ${country.countryNo}`, JSON.stringify(country) )  
 
-    this.ngRedux.dispatch( loadCountry(country) )
-
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -310,8 +375,6 @@ export class DataConnector {
   private cacheIncident = async (incident) => {
 
     this.storage.set(`INCIDENT ${incident.incidentId}`, JSON.stringify(incident) )  
-
-    this.ngRedux.dispatch( loadIncident(incident) )
 
   }
   
@@ -331,7 +394,7 @@ export class DataConnector {
      
     }).catch((error) => {
 
-      this.ngRedux.dispatch( loadPosition(error) )
+      this.ngRedux.dispatch( loadPosition({fullName: 'Can not read GPS position'}) )
 
       console.log('Error getting location', error)
 
@@ -389,6 +452,7 @@ export class DataConnector {
           })
 
           this.cacheUser(newUser)
+          this.ngRedux.dispatch( loadUser(newUser) )
 
           return newUser
 
@@ -421,6 +485,7 @@ export class DataConnector {
           })
 
           this.cacheUser(newUser)
+          this.ngRedux.dispatch( loadUser(newUser) )
 
           return newUser
 
@@ -445,6 +510,7 @@ export class DataConnector {
     })
 
     this.cacheUser(newUser)
+    this.ngRedux.dispatch( loadUser(newUser) )
 
     if (! user.session){
       return newUser
@@ -486,6 +552,7 @@ export class DataConnector {
           })
 
           this.cacheUser(newUser)
+          this.ngRedux.dispatch( loadUser(newUser) )
 
           return newUser
 
@@ -509,7 +576,11 @@ export class DataConnector {
           const data: any = response.json()
 
           data.forEach(item => {
-             this.cachePoint(item) 
+
+            let point = new Point(item)
+
+             this.cachePoint(point) 
+             this.ngRedux.dispatch( loadPoint(point) )
           })
  
 
@@ -533,6 +604,7 @@ export class DataConnector {
             const context = new Context(item)
              
             this.cacheContext(context) 
+            this.ngRedux.dispatch( loadContext(context) )
           })
  
 
@@ -556,6 +628,7 @@ export class DataConnector {
             const country = new Country(item)
              
             this.cacheCountry(country) 
+            this.ngRedux.dispatch( loadCountry(country) )
           })
  
 
@@ -575,11 +648,17 @@ export class DataConnector {
 
           const data: any = response.json()
 
+          let incidents = []
+
           data.forEach(item => {
             const incident = new Incident(item)
              
             this.cacheIncident(incident) 
+            
+            incidents.push(incident)
           })
+
+          this.ngRedux.dispatch( loadIncidents(incidents) )
  
 
     }).catch((error) => {
@@ -602,6 +681,29 @@ export class DataConnector {
     }).catch((error) => {
 
       console.log(`Error getting match incidents for ${countryNo}`, error)
+
+    })
+
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  postAddPoint = (point) => {  
+    
+    const user = this.ngRedux.getState().itinerary.user
+
+    let headers   = new Headers()
+
+    headers.append('session', user.session)  
+
+    return this.http.post(this.restUrl + `itinerary/add/point`, point, new RequestOptions({ headers })).toPromise().then((data) => {
+
+      let item = data.json()[0]
+
+      let newPoint =  new Point(item)
+      
+      this.cachePoint(newPoint)
+
+      this.ngRedux.dispatch( loadPoint(newPoint) )
 
     })
 
@@ -636,11 +738,14 @@ export class DataConnector {
       promises.push( this.discoverPoint(id) )
     })
 
-    await Promise.all(promises).then(items => {
+    await Promise.all(promises).then(points => {
         
-      items.forEach(item => {
-        if (item) {
-          ids = ids.filter(id => +id !== +item.pointId) 
+      points.forEach(point => {
+        if (point) {
+                  
+          this.ngRedux.dispatch( loadPoint(point) )
+
+          ids = ids.filter(id => id !== point.pointId) 
         }
       })
 
@@ -653,6 +758,8 @@ export class DataConnector {
     }
     
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private hydrateContexts = async () => {
 
@@ -683,11 +790,13 @@ export class DataConnector {
       promises.push( this.discoverContext(reference) )
     })
 
-   await Promise.all(promises).then(items => {
+   await Promise.all(promises).then(contexts => {
         
-      items.forEach(item => {
-        if (item) {
-          references = references.filter(reference => reference !== item.contextReference) 
+      contexts.forEach(context => {
+        if (context) {
+          this.ngRedux.dispatch( loadContext(context) )
+          
+          references = references.filter(reference => reference !== context.contextReference) 
         }
       })
 
@@ -700,6 +809,8 @@ export class DataConnector {
     }
 
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private hydrateCountries = async () => {
 
@@ -722,11 +833,13 @@ export class DataConnector {
       promises.push( this.discoverCountry(countryNo) )
     })
 
-   await Promise.all(promises).then(items => {
+   await Promise.all(promises).then(countries => {
         
-      items.forEach(item => {
-        if (item) {
-          countryNos = countryNos.filter(countryNo => countryNo !== item.countryNo) 
+      countries.forEach(country => {
+        if (country) {
+          this.ngRedux.dispatch( loadCountry(country) )
+
+          countryNos = countryNos.filter(countryNo => countryNo !== country.countryNo) 
         }
       })
 
@@ -739,6 +852,8 @@ export class DataConnector {
     }
 
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private hydrateIncidents = async () => {
     const countries = this.ngRedux.getState().geographic.countries.toArray()
@@ -766,13 +881,18 @@ export class DataConnector {
       promises.push( this.discoverIncident(incidentId) )
     })
 
-    await Promise.all(promises).then(items => {
-        
-      items.forEach(item => {
-        if (item) {
-          incidentIds = incidentIds.filter(incidentId => incidentId !== item.incidentId) 
+    await Promise.all(promises).then(incidents => {
+      
+      let newIncidents = []
+
+      incidents.forEach(incident => {
+        if (incident) {
+          newIncidents.push(incident)
+          incidentIds = incidentIds.filter(incidentId => incidentId !== incident.incidentId) 
         }
       })
+
+      this.ngRedux.dispatch( loadIncidents(newIncidents) )
 
     })
 
@@ -784,8 +904,13 @@ export class DataConnector {
 
   }
 
-  private buildDisplays = async () => {
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private buildDisplay = async () => {
 
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   
 }

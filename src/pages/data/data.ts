@@ -5,12 +5,14 @@ import { select, NgRedux     }                          from 'ng2-redux'
 // import { DatePicker } from '@ionic-native/date-picker'
 
 import { DataConnector }         from '../../data/connector' 
+
 import { IApplicationState }     from '../../app/app.reducer'
 
-import { DataManager }    from '../../data/DataManager'
-import { AddPlacePage }   from '../add-place/add-place'
-import { AddTravelPage }  from '../add-travel/add-travel'
-import { DisplayPage }    from '../display/display'
+import { DataManager }           from '../../data/DataManager'
+
+import { AddPlacePage }          from '../add-place/add-place'
+import { AddTravelPage }         from '../add-travel/add-travel'
+import { DisplayPage }           from '../display/display'
 
 @IonicPage()
 @Component({
@@ -70,6 +72,7 @@ export class DataPage {
         {
           name: 'email',
           placeholder: 'EMail',
+          // value: 'testuser@test.net'
           value: email
         },
          {
@@ -112,127 +115,13 @@ export class DataPage {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  private findCities = (searchTerm, targetPrompt, falloverPrompt?) => {
-
-    // if (searchTerm.length === 0){
-    //   return
-    // }
-
-    // this.dataManager.matchConurbation(searchTerm).then((results) => {
-    //   targetPrompt.data.inputs.length = 0
-
-    //   results.forEach((item, i) =>{
-    //     targetPrompt.data.inputs.push({
-    //       type: 'radio',
-    //       value: item,
-    //       label: item.fullName,
-    //       checked: i===0
-    //     })
-    //   })
-
-    //   if (this.dataManager.conurbationMatches.length > 0){
-    //     targetPrompt.present()
-    //   } else if (falloverPrompt) {
-    //     this.findTowns(searchTerm, falloverPrompt)
-    //   }
-      
-    // })
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  private findTowns = (searchTerm, targetPrompt) => {
-
-    // if (searchTerm.length === 0){
-    //   return
-    // }
-
-    // this.dataManager.matchSettlement(searchTerm).then((results) => {
-    //   targetPrompt.data.inputs.length = 0
-
-    //   results.forEach((item, i) =>{
-    //     targetPrompt.data.inputs.push({
-    //       type: 'radio',
-    //       value: item,
-    //       label: item.fullName,
-    //       checked: i===0
-    //     })
-    //   })
-
-    //   targetPrompt.present()
-    // })
-
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  private findAirports = (searchTerm, targetPrompt) => {
-
-    // if (searchTerm.length === 0){
-    //   return
-    // }
-
-    // this.dataManager.matchAirport(searchTerm).then((results) => {
-    //   targetPrompt.data.inputs.length = 0
-
-    //   results.forEach((item, i) =>{
-    //     targetPrompt.data.inputs.push({
-    //       type: 'radio',
-    //       value: item,
-    //       label: item.fullName,
-    //       checked: i===0
-    //     })
-    //   })
-
-    //   targetPrompt.present()
-    // })
-
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  private findAccommodations = (searchTerm, context, targetPrompt) => {
-
-    // if (searchTerm.length === 0){
-    //   return
-    // }
-
-    // this.dataManager.matchAccommodation(searchTerm, context).then((results) => {
-    //   targetPrompt.data.inputs.length = 0
-
-    //   results.forEach((item, i) =>{
-    //     targetPrompt.data.inputs.push({
-    //       type: 'radio',
-    //       value: item,
-    //       label: item.fullName,
-    //       checked: i===0
-    //     })
-    //   })
-
-    //   targetPrompt.present()
-    // })
-
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   addPlace(){    
 
-    // let addPlaceModal = this.modalController.create(AddPlacePage);
+    let addPlaceModal = this.modalController.create(AddPlacePage);
     
-    // addPlaceModal.present();
+    addPlaceModal.present();
 
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  addTravel(){
-
-    // let addTravelModal = this.modalController.create(AddTravelPage);
-    
-    // addTravelModal.present();
-
-  }
+  } 
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

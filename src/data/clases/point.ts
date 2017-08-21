@@ -16,6 +16,11 @@ export class Point {
     this.pointId            = data.pointId 
     this.pointType          = data.pointType 
 
+    if (data.matchType){
+      this.pointId   = `${data.matchType}:${data.matchId}` // TODO ADD DATE
+      this.pointType = data.matchType
+    }
+
     //this.data = data
   }
 }

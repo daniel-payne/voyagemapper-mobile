@@ -15,9 +15,9 @@
 <ion-content>
   <ion-searchbar #searchPlace (ionInput)="getCities(searchPlace.value)"></ion-searchbar>
 
-  <ion-list>
-    <button ion-item *ngFor="let match of matches" (click)="addPlace(match)">
-      {{ match.fullName }}
+  <ion-list padding>
+    <button ion-item *ngFor="let match of (matches$ | async).toArray()" (click)="addPlace(match)">
+      <strong>{{ match.primaryName }}</strong> ,{{ match.secondaryName }}
     </button>
   </ion-list>
 

@@ -1,15 +1,20 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NavController, NavParams, ViewController } from 'ionic-angular';
+import { Component, ElementRef, ViewChild }         from '@angular/core' 
+import { NavController, NavParams, ViewController } from 'ionic-angular' 
+import { select }                                   from 'ng2-redux' 
 
-import { DataManager } from '../../data/DataManager'
+import { DataManager }     from '../../data/DataManager'
+import { DataConnector }   from '../../data/connector'
+import { Point }           from '../../data/clases/point'
 
 @Component({
-  selector: 'page-add-place',
+  selector:    'page-add-place',
   templateUrl: 'add-place.html', 
 })
 export class AddPlacePage {
 
   @ViewChild('searchPlace') searchPlace: ElementRef 
+
+  @select(['search', 'matches' ]) matches$
  
   matches: any = []
 
@@ -17,8 +22,9 @@ export class AddPlacePage {
   showTownsOption = false
 
   constructor(
-    private viewController: ViewController,     
-    public  dataManager:       DataManager
+    private  viewController:    ViewController,     
+    private  dataManager:       DataManager,
+    private  dataConnector:     DataConnector,
   ) {
   }
 
@@ -33,37 +39,31 @@ export class AddPlacePage {
   getCities(searchTerm: any){
     
     if (searchTerm.length > 2){
-      this.dataManager.matchConurbation(searchTerm).then((results) => {
-  
-        this.matches =  [...results]
-  
-        this.pointType       = 'CON'
-        this.showTownsOption = (this.matches.length < 5)
-        
-      })
+      this.dataConnector.matchConurbation(searchTerm).then(() => {
+        this.showTownsOption = true
+      }) 
+    } else {
+      this.showTownsOption = false
+      this.dataConnector.clearMatches()
     }
+
   }
 
   getTowns(searchTerm: any){
     
-    if (searchTerm.length > 2){
-      this.dataManager.matchSettlement(searchTerm).then((results) => {
-  
-        this.matches =  [...results]
-  
-        this.pointType       = 'SET'
-        this.showTownsOption = false
-        
-      })
-    }
+    this.dataConnector.matchSettlement(searchTerm)
+
+    this.showTownsOption = false
+
   }
 
   addPlace(match){
- 
-    let newPoint = Object.assign( {}, match, {pointType: this.pointType} )
 
-    this.dataManager.createPoint(newPoint) 
+    let newPoint = new Point(match)
+ 
+    this.dataConnector.addPoint(newPoint)  
 
     this.close()
+
   }
 }
