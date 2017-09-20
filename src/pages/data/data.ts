@@ -8,7 +8,7 @@ import { DataConnector }         from '../../data/connector'
 
 import { IApplicationState }     from '../../app/app.reducer'
 
-import { DataManager }           from '../../data/DataManager'
+// import { DataManager }           from '../../data/DataManager'
 
 import { AddPlacePage }          from '../add-place/add-place'
 import { AddTravelPage }         from '../add-travel/add-travel'
@@ -39,7 +39,7 @@ export class DataPage {
     private dataConnector:    DataConnector,
 
     private ngRedux:          NgRedux<IApplicationState>,
-    public dataManager:       DataManager,
+    // public dataManager:       DataManager,
     // public datePicker:        DatePicker
   ) {
   }

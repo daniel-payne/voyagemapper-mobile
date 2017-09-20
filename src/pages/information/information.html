@@ -1,19 +1,19 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{dataManager.selectedPoint.primaryName}}</ion-title> 
+    <!-- <ion-title>{{dataManager.selectedPoint.primaryName}}</ion-title>  -->
   </ion-navbar>
 
  
   <ion-segment [(ngModel)]="selectedSegement" (ionChange)="selectionChanged($event)">
     <ion-segment-button value="COUNTY">
-      {{dataManager.selectedPoint.context.countyName}}
+      <!-- {{dataManager.selectedPoint.context.countyName}} -->
     </ion-segment-button>
     <ion-segment-button value="STATE">
-      {{dataManager.selectedPoint.context.stateName}}
+      <!-- {{dataManager.selectedPoint.context.stateName}} -->
     </ion-segment-button>
     <ion-segment-button value="COUNTRY">
-      {{dataManager.selectedPoint.context.countryName}}
+      <!-- {{dataManager.selectedPoint.context.countryName}} -->
     </ion-segment-button>
   </ion-segment>
  

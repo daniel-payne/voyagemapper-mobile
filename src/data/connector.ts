@@ -5,6 +5,7 @@ import { Geolocation }                     from '@ionic-native/geolocation'
 import { Storage }                         from '@ionic/storage'
 import Immutable                           from 'immutable'
 import * as moment                         from 'moment'
+import 'rxjs/add/operator/toPromise';
 
 import { IApplicationState } from '../app/app.reducer'
 

@@ -16,7 +16,7 @@ export class ItineraryPage {
   constructor(
     private  navController:          NavController, 
     private  navParams:              NavParams,
-    private  dataManager:            DataManager,
+    // private  dataManager:            DataManager,
     public   modalController:        ModalController,
   ) {
   }
@@ -28,7 +28,7 @@ export class ItineraryPage {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   showInformation(target){
-    this.dataManager.choosePoint(target)
+    // this.dataManager.choosePoint(target)
     
     this.navController.push(InformationPage)
   }
@@ -37,7 +37,7 @@ export class ItineraryPage {
 
   refresh(){    
 
-    this.dataManager.refresh() 
+    // this.dataManager.refresh() 
 
   }
   

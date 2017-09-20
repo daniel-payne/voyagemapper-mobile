@@ -1,7 +1,7 @@
 import { Component }                           from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { DataManager }     from '../../data/DataManager'
+// import { DataManager }     from '../../data/DataManager'
 
 @IonicPage()
 @Component({
@@ -16,7 +16,7 @@ export class InformationPage {
   constructor(
     private  navCtrl:          NavController, 
     private  navParams:        NavParams,
-    private  dataManager:      DataManager,
+    // private  dataManager:      DataManager,
   ) {
   }
 
@@ -25,12 +25,12 @@ export class InformationPage {
   }
 
   selectionChanged(event){
-    let context = this.dataManager.selectedPoint.context
+    // let context = this.dataManager.selectedPoint.context
     
-    switch(this.selectedSegement) {
-      case 'COUNTRY':   this.displayIndicdents = context.countryIncidents;    break;
-      case 'STATE':     this.displayIndicdents = context.stateIncidents;      break;
-      case 'COUNTY':    this.displayIndicdents = context.countyIncidents;     break;
-    }
+    // switch(this.selectedSegement) {
+    //   case 'COUNTRY':   this.displayIndicdents = context.countryIncidents;    break;
+    //   case 'STATE':     this.displayIndicdents = context.stateIncidents;      break;
+    //   case 'COUNTY':    this.displayIndicdents = context.countyIncidents;     break;
+    // }
   }
 }

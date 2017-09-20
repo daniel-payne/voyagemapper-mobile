@@ -4,7 +4,7 @@ import  moment                  from 'moment'
 
 // import { DatePicker } from '@ionic-native/date-picker';
 
-import { DataManager }          from '../../data/DataManager'
+// import { DataManager }          from '../../data/DataManager'
 
 @Component({
   selector: 'page-add-travel',
@@ -53,7 +53,7 @@ export class AddTravelPage {
 
   constructor(
     private viewController: ViewController,     
-    public  dataManager:    DataManager,
+    // public  dataManager:    DataManager,
     // private datePicker:     DatePicker,
   ) {
     this.step1()
@@ -168,8 +168,8 @@ export class AddTravelPage {
       this.departureDate = this.departureDate.substr(0,11) + '01:00' 
       this.arrivalDate   = this.arrivalDate.substr(0,11)   + '01:01' 
 
-      this.dataManager.createPoint( Object.assign({}, this.departureAirport,   {pointType: 'FLD', dateAtPoint: this.departureDate  } )) 
-      this.dataManager.createPoint( Object.assign({}, this.arrivalAirport,     {pointType: 'FLA', dateAtPoint: this.arrivalDate    } )) 
+      // this.dataManager.createPoint( Object.assign({}, this.departureAirport,   {pointType: 'FLD', dateAtPoint: this.departureDate  } )) 
+      // this.dataManager.createPoint( Object.assign({}, this.arrivalAirport,     {pointType: 'FLA', dateAtPoint: this.arrivalDate    } )) 
     }
 
     if (this.hasAccommodation === true){
@@ -180,7 +180,7 @@ export class AddTravelPage {
 
       this.checkinDate = this.checkinDate.substr(0,11) + '12:00' 
 
-      this.dataManager.createPoint( Object.assign({}, this.accommodationHotel, {pointType: 'ACH', dateAtPoint: this.checkinDate, durationAtPoint:  Math.round(duration.asDays())   } )) 
+      // this.dataManager.createPoint( Object.assign({}, this.accommodationHotel, {pointType: 'ACH', dateAtPoint: this.checkinDate, durationAtPoint:  Math.round(duration.asDays())   } )) 
     }
 
     if (this.hasReturnFlight === true){
@@ -188,8 +188,8 @@ export class AddTravelPage {
       this.leavingDate     = this.leavingDate.substr(0,11)     + '23:00' 
       this.returningDate   = this.returningDate.substr(0,11)   + '23:01' 
  
-      this.dataManager.createPoint( Object.assign({}, this.arrivalAirport,     {pointType: 'FLD', dateAtPoint: this.leavingDate    } )) 
-      this.dataManager.createPoint( Object.assign({}, this.departureAirport,   {pointType: 'FLA', dateAtPoint: this.returningDate  } )) 
+      // this.dataManager.createPoint( Object.assign({}, this.arrivalAirport,     {pointType: 'FLD', dateAtPoint: this.leavingDate    } )) 
+      // this.dataManager.createPoint( Object.assign({}, this.departureAirport,   {pointType: 'FLA', dateAtPoint: this.returningDate  } )) 
     }
 
     this.close();
@@ -209,11 +209,11 @@ export class AddTravelPage {
     }
 
     if (searchTerm.length > 2){
-      this.dataManager.matchAirport(searchTerm).then((results) => {
+      // this.dataManager.matchAirport(searchTerm).then((results) => {
   
-        this.matches =  [...results]
+        // this.matches =  [...results]
         
-      }) 
+      // }) 
     }
   }  
 
@@ -284,27 +284,27 @@ export class AddTravelPage {
   getCities(searchTerm: any){
     
     if (searchTerm.length > 2){
-      this.dataManager.matchConurbation(searchTerm).then((results) => {
+      // this.dataManager.matchConurbation(searchTerm).then((results) => {
   
-        this.matches =  [...results]
+      //   this.matches =  [...results]
   
-        this.stepDescription = 'Choose a city you are staying in'
-        this.showTownsOption = (this.matches.length < 5)
+      //   this.stepDescription = 'Choose a city you are staying in'
+      //   this.showTownsOption = (this.matches.length < 5)
         
-      })
+      // })
     }
   }
 
   getTowns(searchTerm: any){
     if (searchTerm.length > 2){
-      this.dataManager.matchSettlement(searchTerm).then((results) => {
+      // this.dataManager.matchSettlement(searchTerm).then((results) => {
   
-        this.matches =  [...results]
+      //   this.matches =  [...results]
   
-        this.stepDescription = 'Choose a town you are staying in'
-        this.showTownsOption = false
+      //   this.stepDescription = 'Choose a town you are staying in'
+      //   this.showTownsOption = false
         
-      })
+      // })
     }
   }
 
@@ -317,14 +317,14 @@ export class AddTravelPage {
   getHotels(searchTerm: any){
     
     if (searchTerm.length > 2){
-      this.dataManager.matchAccommodation(searchTerm, this.accommodationPlace.contextReference).then((results) => {
+      // this.dataManager.matchAccommodation(searchTerm, this.accommodationPlace.contextReference).then((results) => {
   
-        this.matches =  [...results]
+      //   this.matches =  [...results]
   
-        this.stepDescription = 'Choose a town you are staying in'
-        this.showTownsOption = false
+      //   this.stepDescription = 'Choose a town you are staying in'
+      //   this.showTownsOption = false
         
-      })
+      // })
     }
   }
 

@@ -8,7 +8,7 @@ import { SplashScreen } from '@ionic-native/splash-screen'
 //import { LoginPage }    from '../pages/login/login' 
 import { DataPage }        from '../pages/data/data' 
 
-import { DataManager }     from '../data/DataManager'
+// import { DataManager }     from '../data/DataManager'
 
 @Component({
   templateUrl: 'app.html'
@@ -20,7 +20,7 @@ export class MyApp {
     private  platform:     Platform, 
     private  statusBar:    StatusBar, 
     private  splashScreen: SplashScreen, 
-    private  dataManager:  DataManager
+    // private  dataManager:  DataManager
   ) {
     platform.ready()
       .then(() => {

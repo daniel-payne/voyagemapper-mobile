@@ -4,7 +4,7 @@ import { IonicPage, NavController, NavParams, ModalController  } from 'ionic-ang
 import { InformationPage }       from '../information/information'
 import { AddPlacePage }          from '../add-place/add-place'
 
-import { DataManager }           from '../../data/DataManager'
+// import { DataManager }           from '../../data/DataManager'
 
 @IonicPage()
 @Component({
@@ -16,7 +16,7 @@ export class PlacesPage {
   constructor(
     private  navController:          NavController, 
     private  navParams:              NavParams,
-    private  dataManager:            DataManager,
+    // private  dataManager:            DataManager,
     public   modalController:        ModalController,
   ) {
   }
@@ -28,7 +28,7 @@ export class PlacesPage {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   showInformation(target){
-    this.dataManager.choosePoint(target)
+    // this.dataManager.choosePoint(target)
     
     this.navController.push(InformationPage)
   }

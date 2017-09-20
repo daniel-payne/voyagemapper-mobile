@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild }         from '@angular/core'
 import { NavController, NavParams, ViewController } from 'ionic-angular' 
 import { select }                                   from 'ng2-redux' 
 
-import { DataManager }     from '../../data/DataManager'
+// import { DataManager }     from '../../data/DataManager'
 import { DataConnector }   from '../../data/connector'
 import { Point }           from '../../data/clases/point'
 
@@ -23,7 +23,7 @@ export class AddPlacePage {
 
   constructor(
     private  viewController:    ViewController,     
-    private  dataManager:       DataManager,
+    // private  dataManager:       DataManager,
     private  dataConnector:     DataConnector,
   ) {
   }

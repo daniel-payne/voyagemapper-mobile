@@ -11,7 +11,7 @@ import { NgReduxModule, NgRedux }                       from 'ng2-redux';
 
 import { Geolocation } from '@ionic-native/geolocation';
 
-import { DataManager }     from '../data/DataManager'
+// import { DataManager }     from '../data/DataManager'
 
 import { MyApp }    from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -90,7 +90,7 @@ let devtools: StoreEnhancer<IApplicationState> =
 
     {provide: ErrorHandler, useClass: IonicErrorHandler},
 
-    DataManager,
+    // DataManager,
     DataConnector,
 
     {provide: 'REST_URL', useValue: 'http://localhost:1337/'}
