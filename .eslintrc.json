@@ -1,0 +1,13 @@
+{
+   "extends": "react-app",
+  
+   "rules": {
+     "linebreak-style"                  : ["off"],
+     "semi"                             : ["error", "never"],
+ 
+     "key-spacing":      ["off"],
+     "max-len":          ["error", { "code": 150, "ignoreComments": true, "ignoreUrls": true  }],
+ 
+     "react/require-extension": ["off"]
+   } 
+ }

@@ -1,0 +1,20 @@
+.login {
+  margin: 24px auto;
+  width: 284px;
+}
+
+.login .login--connect {
+  padding: 8px;
+}
+
+.login .login--connect-button {
+  width: calc(100% - 8px);
+}
+
+.login .login--disconnect {
+  padding: 8px;
+}
+
+.login .login--disconnect-button {
+  width: calc(100% - 8px);
+}

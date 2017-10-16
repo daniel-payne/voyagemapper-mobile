@@ -1,0 +1,34 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 128px auto;
+  grid-column-gap: 8px;
+  grid-row-gap: 8px;
+  height: calc(100% - 32px);
+  margin: 8px;
+}
+
+.dashboard .item {
+  /* padding:     8px; */
+}
+
+.dashboard .item-position {
+  grid-column: 1 / 2;
+  grid-row:    1 / 2;
+}
+
+.dashboard .item-itinerary {
+  grid-column: 1 / 2;
+  grid-row:    2 / 3;
+}
+
+.dashboard .item-places {
+  grid-column: 2 / 3;
+  grid-row:    1 / 3;
+}
+
+
+.dashboard .item-people {
+  grid-column: 3 / 4;
+  grid-row:    1 / 3;
+}
